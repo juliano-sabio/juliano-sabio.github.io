@@ -22,15 +22,19 @@ DESCRICAO = (
 
 
 def embutir(html: str) -> str:
-    """Troca src="img/x.png" pelo data: URI correspondente."""
+    """Troca src/poster="img/x" pelo data: URI correspondente.
+
+    O artifact roda sob CSP que bloqueia arquivo externo, entao imagem e video
+    precisam viajar dentro do proprio HTML."""
     def troca(m):
-        caminho = AQUI / m.group(1)
+        atributo, rel = m.group(1), m.group(2)
+        caminho = AQUI / rel
         if not caminho.exists():
-            raise SystemExit(f'ERRO: imagem não encontrada: {caminho}')
-        tipo = mimetypes.guess_type(caminho.name)[0] or 'image/png'
+            raise SystemExit(f'ERRO: arquivo nao encontrado: {caminho}')
+        tipo = mimetypes.guess_type(caminho.name)[0] or 'application/octet-stream'
         dados = base64.b64encode(caminho.read_bytes()).decode('ascii')
-        return f'src="data:{tipo};base64,{dados}"'
-    return re.sub(r'src="(img/[^"]+)"', troca, html)
+        return f'{atributo}="data:{tipo};base64,{dados}"'
+    return re.sub(r'\b(src|poster)="(img/[^"]+)"', troca, html)
 
 
 def main():

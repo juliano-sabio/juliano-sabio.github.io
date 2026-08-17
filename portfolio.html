@@ -266,12 +266,16 @@
     margin-top: 2.75rem;
   }
   .tela { margin: 0; }
-  .tela img {
+  .tela img, .tela video {
     display: block;
     width: 100%;
     height: auto;
     border: 1px solid var(--rule);
     background: var(--surface);
+  }
+  /* quem pediu menos movimento não recebe vídeo em laço automático */
+  @media (prefers-reduced-motion: reduce) {
+    .tela video { animation: none; }
   }
   .tela figcaption {
     font-family: var(--f-mono);
@@ -377,10 +381,10 @@
 
 <div class="wrap">
   <div class="metrics">
-    <div class="metric"><span class="n">5.207</span><span class="k">linhas Dart</span></div>
-    <div class="metric"><span class="n">11</span><span class="k">arquivos de teste</span></div>
-    <div class="metric"><span class="n">6</span><span class="k">telas em produção</span></div>
-    <div class="metric"><span class="n">0</span><span class="k">ponto flutuante</span></div>
+    <div class="metric"><span class="n">100 mil</span><span class="k">linhas em Dart e C#</span></div>
+    <div class="metric"><span class="n">4</span><span class="k">linguagens em projeto real</span></div>
+    <div class="metric"><span class="n">64</span><span class="k">testes automatizados</span></div>
+    <div class="metric"><span class="n">2</span><span class="k">jogos comerciais</span></div>
   </div>
 </div>
 
@@ -483,6 +487,80 @@ String <span class="t">formatPercentBp</span>(int bp)</pre>
 <div class="wrap">
   <section>
     <div class="section-head">
+      <span class="label">Segundo projeto</span>
+      <h2>Spirit Mask — sobrevivência com co-op online</h2>
+    </div>
+
+    <figure class="tela tela--larga" style="margin-top:0">
+      <video src="img/spirit-mask.mp4" poster="img/spirit-mask-poster.jpg"
+             autoplay muted loop playsinline preload="metadata"
+             width="960" height="540"
+             aria-label="Trecho de jogo do Spirit Mask mostrando dois jogadores em partida cooperativa, com efeitos de habilidade em cena"></video>
+      <figcaption>Partida cooperativa — dois jogadores em campo, conectados por relay.</figcaption>
+    </figure>
+
+    <div class="prose" style="margin-top:2rem">
+      <p>
+        Projeto comercial em Unity, de código fechado. É o maior que já construí:
+        <strong>94.930 linhas de C#</strong> em 372 scripts, 27 cenas e 111 prefabs —
+        cerca de dezoito vezes o tamanho do Probov.
+      </p>
+    </div>
+
+    <div style="margin-top:2.5rem">
+      <div class="decision">
+        <h3>Multiplayer online, não apenas rede local</h3>
+        <p>
+          Co-op sobre Unity Netcode for GameObjects, com Relay e Authentication: dois
+          jogadores em máquinas diferentes, sem depender de estarem na mesma rede nem
+          de abrir porta no roteador. Sincronizar inimigo, dano e estado de chefe
+          entre clientes é a parte do projeto que mais exigiu cuidado.
+        </p>
+      </div>
+
+      <div class="decision">
+        <h3>Construí ferramenta porque o projeto passou do tamanho da mão</h3>
+        <p>
+          Com mais de cem prefabs, alterar todos um a um deixa de ser viável. Escrevi
+          extensões de editor próprias para aplicar mudanças em lote — adicionar
+          componente de rede a todos os inimigos, propagar um item novo, registrar
+          ícones de habilidade. É investimento que só se paga em projeto grande, e que
+          decide se ele continua avançando ou trava.
+        </p>
+      </div>
+
+      <div class="decision">
+        <h3>Programo e desenho o mesmo jogo</h3>
+        <p>
+          A arte em pixel é minha, feita no Aseprite: 113 arquivos de origem entre
+          sprites, animação e tilesets. Num time pequeno isso elimina a ida e volta
+          entre quem programa e quem desenha — e, na prática, é o que decide se o
+          projeto sai do papel.
+        </p>
+      </div>
+
+      <div class="decision">
+        <h3>Preparado para outro idioma desde o começo</h3>
+        <p>
+          Sistema de localização próprio, com seleção de idioma em jogo. O texto não
+          fica preso no código: trocar de idioma não pede recompilar nem caçar string
+          espalhada por cena.
+        </p>
+      </div>
+    </div>
+
+    <ul class="stack" style="margin-top:2.5rem">
+      <li>Unity</li><li>C#</li><li>Netcode for GameObjects</li><li>Unity Relay</li>
+      <li>UI Toolkit</li><li>ScriptableObjects</li><li>Aseprite</li><li>Localização</li>
+    </ul>
+  </section>
+</div>
+
+<div class="ruler"></div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
       <span class="label">Outros trabalhos</span>
       <h2>O que mais eu construo</h2>
     </div>
@@ -498,21 +576,6 @@ String <span class="t">formatPercentBp</span>(int bp)</pre>
         <p style="margin-top:.85rem">
           Entrego em Dart, C#, Node e Python conforme o problema pede. Stack nova
           não me trava; o que eu não faço é fingir experiência que não tenho nela.
-        </p>
-      </div>
-      <div class="card">
-        <h3>Jogos em Unity — código e arte</h3>
-        <p>
-          Dois projetos comerciais em andamento, de código fechado. Um é sobrevivência
-          a hordas, com evolução por nível e ataques distintos. O outro é tático de
-          turnos em grade, onde a vida do rei é a moeda usada para invocar — cada peça
-          posta em campo custa parte da própria condição de vitória.
-        </p>
-        <p style="margin-top:.85rem">
-          C# com UI Toolkit e prefabs, e a arte em pixel feita por mim no Aseprite:
-          sprites, animação e tilesets. Programar e desenhar o mesmo projeto elimina
-          a ida e volta entre dev e artista — e, num projeto pequeno, é o que decide
-          se ele sai do papel.
         </p>
       </div>
       <div class="card">
@@ -619,6 +682,17 @@ String <span class="t">formatPercentBp</span>(int bp)</pre>
     </p>
 
 <script>
+  // Quem configurou o sistema para menos movimento não deve receber vídeo
+  // rodando sozinho. O CSS não interrompe reprodução automática; isto interrompe.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('video[autoplay]').forEach(function (v) {
+      v.autoplay = false;
+      v.loop = false;
+      v.controls = true;
+      v.pause();
+    });
+  }
+
   document.querySelectorAll('.copiar').forEach(function (botao) {
     botao.addEventListener('click', async function () {
       const email = botao.dataset.email;
