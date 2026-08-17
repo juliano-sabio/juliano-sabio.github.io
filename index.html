@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Desenvolvedor Flutter. Aplicativos que funcionam offline, com número que não pode errar.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Juliano Sabio — Desenvolvedor mobile">
+<meta property="og:description" content="Desenvolvedor Flutter. Aplicativos que funcionam offline, com número que não pode errar.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📱</text></svg>">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}</style>
+<title>Juliano Sabio</title>
+
+<style>
+  /* ---------- tokens: tema claro é a base ---------- */
+  :root {
+    --paper:      #F1F3EE;
+    --surface:    #FFFFFF;
+    --surface-2:  #E8ECE5;
+    --ink:        #161D17;
+    --ink-soft:   #4A554C;
+    --ink-faint:  #5E6A60;
+    --field:      #24422F;
+    --field-soft: #3D6449;
+    --tag:        #B98505;
+    --tag-ink:    #6B4D00;
+    --rule:       #CDD4C7;
+    --rule-soft:  #E0E5DB;
+    --shadow:     0 1px 2px rgba(22,29,23,.06), 0 8px 24px -12px rgba(22,29,23,.18);
+
+    --f-display: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --f-body:    Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --f-mono:    ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+
+    --measure: 66ch;
+    --gap:     clamp(3rem, 7vw, 5.5rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #0F1310;
+      --surface:    #171E19;
+      --surface-2:  #1E2620;
+      --ink:        #E7ECE4;
+      --ink-soft:   #AEB8AF;
+      --ink-faint:  #7E8A80;
+      --field:      #8FB89A;
+      --field-soft: #6E9A7B;
+      --tag:        #E2B33C;
+      --tag-ink:    #F0D48A;
+      --rule:       #2C362E;
+      --rule-soft:  #222B24;
+      --shadow:     0 1px 2px rgba(0,0,0,.5), 0 10px 30px -14px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #0F1310;
+    --surface:    #171E19;
+    --surface-2:  #1E2620;
+    --ink:        #E7ECE4;
+    --ink-soft:   #AEB8AF;
+    --ink-faint:  #7E8A80;
+    --field:      #8FB89A;
+    --field-soft: #6E9A7B;
+    --tag:        #E2B33C;
+    --tag-ink:    #F0D48A;
+    --rule:       #2C362E;
+    --rule-soft:  #222B24;
+    --shadow:     0 1px 2px rgba(0,0,0,.5), 0 10px 30px -14px rgba(0,0,0,.7);
+  }
+
+  /* ---------- base ---------- */
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 3rem);
+  }
+
+  h1, h2, h3, .display {
+    font-family: var(--f-display);
+    font-weight: 800;
+    letter-spacing: -0.021em;
+    text-wrap: balance;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  p { margin: 0; max-width: var(--measure); }
+  a { color: inherit; }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--tag);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* rótulo mono — o mostrador do instrumento */
+  .label {
+    font-family: var(--f-mono);
+    font-size: .6875rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* fita de medição: as marcas de régua são o divisor estrutural da página */
+  .ruler {
+    height: 11px;
+    background-image:
+      repeating-linear-gradient(to right,
+        var(--rule) 0 1px, transparent 1px 12px);
+    border-top: 1px solid var(--rule-soft);
+    opacity: .85;
+  }
+  .ruler--major {
+    height: 15px;
+    background-image:
+      repeating-linear-gradient(to right,
+        var(--field) 0 1px, transparent 1px 12px),
+      repeating-linear-gradient(to right,
+        var(--tag) 0 2px, transparent 2px 60px);
+  }
+
+  section { padding-block: var(--gap); }
+
+  /* ---------- cabeçalho ---------- */
+  header { padding-top: clamp(3.5rem, 9vw, 6.5rem); padding-bottom: 2.5rem; }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1.75rem;
+  }
+  .eyebrow .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--tag);
+    flex: none;
+  }
+
+  h1 { font-size: clamp(2.6rem, 7.5vw, 4.6rem); }
+
+  .lede {
+    font-size: clamp(1.15rem, 2.3vw, 1.45rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-top: 1.5rem;
+    max-width: 34ch;
+  }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .625rem;
+    margin-top: 2.25rem;
+  }
+
+  .btn {
+    font-family: var(--f-mono);
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-decoration: none;
+    padding: .7rem 1.15rem;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--ink);
+    display: inline-block;
+    transition: border-color .15s, transform .15s, background .15s;
+  }
+  .btn:hover { border-color: var(--field-soft); transform: translateY(-1px); }
+  .btn--tag {
+    background: var(--field);
+    border-color: var(--field);
+    color: var(--paper);
+  }
+  .btn--tag:hover { background: var(--field-soft); border-color: var(--field-soft); }
+
+  /* ---------- tira de números ---------- */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 1px;
+    background: var(--rule-soft);
+    border-block: 1px solid var(--rule-soft);
+  }
+  .metric { background: var(--paper); padding: 1.4rem 1.1rem; }
+  .metric .n {
+    font-family: var(--f-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--field);
+    display: block;
+    line-height: 1;
+  }
+  .metric .k {
+    font-family: var(--f-mono);
+    font-size: .6875rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: .55rem;
+    display: block;
+  }
+
+  /* ---------- blocos ---------- */
+  h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-bottom: 1rem; }
+  h3 { font-size: 1.1rem; letter-spacing: -0.012em; }
+
+  .section-head { margin-bottom: 2.5rem; }
+  .section-head .label { display: block; margin-bottom: .85rem; }
+
+  .prose > * + * { margin-top: 1.15rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule-soft);
+    padding: clamp(1.4rem, 3vw, 2rem);
+    box-shadow: var(--shadow);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.15rem;
+  }
+
+  .card h3 { margin-bottom: .6rem; }
+  .card p { font-size: .96rem; color: var(--ink-soft); }
+
+  /* decisão técnica destacada */
+  .decision {
+    border-left: 3px solid var(--tag);
+    padding-left: 1.35rem;
+  }
+  .decision h3 { margin-bottom: .5rem; }
+  .decision p { color: var(--ink-soft); }
+  .decision + .decision { margin-top: 2rem; }
+
+  .codeblock {
+    overflow-x: auto;
+    background: var(--surface-2);
+    border: 1px solid var(--rule-soft);
+    padding: 1.1rem 1.25rem;
+    margin-top: 1rem;
+  }
+  .codeblock pre {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: .8125rem;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+  .codeblock .c { color: var(--ink-faint); }
+  .codeblock .t { color: var(--field); font-weight: 600; }
+
+  /* capturas do app */
+  .telas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.75rem;
+  }
+  .tela { margin: 0; }
+  .tela img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  .tela figcaption {
+    font-family: var(--f-mono);
+    font-size: .72rem;
+    line-height: 1.5;
+    color: var(--ink-faint);
+    margin-top: .7rem;
+  }
+  .tela--larga {
+    margin-top: 2rem;
+    max-width: 44rem;
+  }
+
+  /* lista de stack */
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stack li {
+    font-family: var(--f-mono);
+    font-size: .78rem;
+    padding: .38rem .7rem;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+  }
+
+  /* serviços numerados — a ordem é real: é a sequência de um projeto */
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.6rem; }
+  .step { display: grid; grid-template-columns: 3.25rem 1fr; gap: 1rem; align-items: start; }
+  .step .num {
+    font-family: var(--f-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: .8125rem;
+    font-weight: 700;
+    color: var(--tag-ink);
+    padding-top: .22rem;
+    border-top: 2px solid var(--tag);
+  }
+  .step p { color: var(--ink-soft); font-size: .97rem; margin-top: .35rem; }
+
+  /* rodapé */
+  footer { padding-block: var(--gap) 4rem; }
+
+  /* O endereço fica visível como texto de propósito: mailto: só funciona em
+     quem tem cliente de e-mail configurado, e a maioria não tem. */
+  .endereco-bloco {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .875rem;
+    margin-top: 2.25rem;
+  }
+  .endereco {
+    font-family: var(--f-mono);
+    font-size: clamp(.95rem, 2.4vw, 1.2rem);
+    font-weight: 600;
+    color: var(--field);
+    text-decoration: none;
+    border-bottom: 2px solid var(--tag);
+    padding-bottom: 2px;
+    word-break: break-all;
+  }
+  .endereco:hover { color: var(--field-soft); }
+  .copiar { cursor: pointer; font-family: var(--f-mono); }
+  .copiar[data-copiado] {
+    border-color: var(--field);
+    color: var(--field);
+  }
+  .footer-note {
+    font-family: var(--f-mono);
+    font-size: .75rem;
+    color: var(--ink-faint);
+    margin-top: 2rem;
+    max-width: 52ch;
+  }
+
+  .todo {
+    background: var(--surface-2);
+    border: 1px dashed var(--tag);
+    padding: 1rem 1.15rem;
+    font-family: var(--f-mono);
+    font-size: .78rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-top: 1.25rem;
+  }
+  .todo strong { color: var(--tag-ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">
+      <span class="dot"></span>
+      <span class="label">Desenvolvedor mobile · Flutter · disponível para projetos</span>
+    </div>
+    <h1>Juliano Sabio</h1>
+    <p class="lede">
+      Construo aplicativos que precisam funcionar longe do escritório — sem sinal,
+      com número que não pode errar.
+    </p>
+    <div class="contact-row">
+      <a class="btn btn--tag" href="mailto:juliano.sabio.mathias@gmail.com">Falar sobre um projeto</a>
+      <a class="btn" href="mailto:juliano.sabio.mathias@gmail.com">juliano.sabio.mathias@gmail.com</a>
+      <a class="btn" href="https://github.com/juliano-sabio/probov" target="_blank" rel="noopener">Probov no GitHub</a>
+    </div>
+  </header>
+</div>
+
+<div class="ruler ruler--major"></div>
+
+<div class="wrap">
+  <div class="metrics">
+    <div class="metric"><span class="n">5.207</span><span class="k">linhas Dart</span></div>
+    <div class="metric"><span class="n">11</span><span class="k">arquivos de teste</span></div>
+    <div class="metric"><span class="n">6</span><span class="k">telas em produção</span></div>
+    <div class="metric"><span class="n">0</span><span class="k">ponto flutuante</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <span class="label">Projeto em destaque</span>
+      <h2>Probov — pesagem e precificação de bovinos</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        Quem compra e vende gado fecha negócio no curral, com o boi na balança e o
+        celular sem sinal. A conta é feita na hora: peso, rendimento de carcaça,
+        preço da arroba, desconto por lote. Errar centavo aqui, multiplicado por
+        cabeça, vira prejuízo real no fim do dia.
+      </p>
+      <p>
+        O Probov faz essa conta offline, guarda tudo no aparelho e imprime o relatório
+        em PDF na saída do curral — sem depender de internet em nenhum momento.
+      </p>
+    </div>
+
+    <div style="margin-top:2.75rem">
+      <div class="decision">
+        <h3>Nenhum número passa por ponto flutuante</h3>
+        <p>
+          Dinheiro em centavos, peso em gramas, arroba em centésimos, percentual em
+          basis points. Toda a aritmética do domínio roda em inteiro e só vira texto
+          na hora de exibir. É a decisão que impede o erro de arredondamento de
+          aparecer três meses depois, quando já virou divergência de fechamento.
+        </p>
+        <div class="codeblock">
+<pre><span class="c">// lib/core/format.dart — inteiro entra, texto sai</span>
+String <span class="t">formatBrl</span>(int centavos)
+String <span class="t">formatKg</span>(int pesoG)
+String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 1664 → 16,64 @</span>
+String <span class="t">formatPercentBp</span>(int bp)</pre>
+        </div>
+      </div>
+
+      <div class="decision">
+        <h3>Correção retroativa se propaga sozinha</h3>
+        <p>
+          Peso digitado errado é rotina no curral. Ao corrigir, o relatório inteiro
+          se refaz — totais, médias e valores por lote — porque ele é estado derivado,
+          não cópia salva. Ninguém precisa lembrar de recalcular nada.
+        </p>
+      </div>
+
+      <div class="decision">
+        <h3>Banco de verdade, testado em memória</h3>
+        <p>
+          Persistência local em SQLite com Drift, schema com exclusão em cascata, e
+          uma suíte que abre um banco em memória a cada teste. O domínio é coberto
+          isoladamente: unidades, parsing, precificação e geração do PDF têm teste próprio.
+        </p>
+      </div>
+
+      <div class="decision">
+        <h3>Escrito na ordem certa: spec, plano, testes, código</h3>
+        <p>
+          O histórico do repositório mostra o método — a especificação do domínio veio
+          primeiro, depois o plano dividido em 16 tarefas, e só então a implementação
+          camada por camada. As dependências têm versão fixada <em>com o motivo escrito
+          ao lado</em>, para o próximo desenvolvedor não desfazer sem saber.
+        </p>
+      </div>
+    </div>
+
+    <div class="telas">
+      <figure class="tela">
+        <img src="img/pesagem.png" alt="Tela de pesagem do Probov: peso de 482 kg em números grandes, com a prévia de 16,71 arrobas e R$ 5.221,67 abaixo, e teclado numérico." loading="lazy" width="424" height="840">
+        <figcaption>Pesagem — o valor aparece antes de salvar, não depois.</figcaption>
+      </figure>
+      <figure class="tela">
+        <img src="img/relatorio.png" alt="Relatório do lote: totais de 6 cabeças, peso médio, arrobas totais e valor total de R$ 32.023,34, seguido da lista de animais." loading="lazy" width="424" height="840">
+        <figcaption>Relatório — colunas alinhadas por dígito de largura fixa.</figcaption>
+      </figure>
+      <figure class="tela">
+        <img src="img/lista.png" alt="Lista de lotes mostrando Boiada Santa Rita com 6 cabeças e o valor total destacado em verde." loading="lazy" width="424" height="840">
+        <figcaption>Lista — o valor do lote é o que se procura, então tem destaque.</figcaption>
+      </figure>
+    </div>
+
+    <figure class="tela tela--larga">
+      <img src="img/pdf.png" alt="PDF gerado pelo app: cabeçalho do lote, tabela de animais com peso, arrobas, preço e valor, e bloco de totais." loading="lazy" width="794" height="618">
+      <figcaption>O PDF que sai do curral — gerado no aparelho, sem servidor.</figcaption>
+    </figure>
+
+    <ul class="stack" style="margin-top:2.5rem">
+      <li>Flutter</li><li>Dart</li><li>Drift / SQLite</li><li>Riverpod</li>
+      <li>PDF + impressão</li><li>i18n pt-BR</li><li>Android</li><li>iOS</li>
+    </ul>
+  </section>
+</div>
+
+<div class="ruler"></div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <span class="label">Outros trabalhos</span>
+      <h2>O que mais eu construo</h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Backend e monorepo</h3>
+        <p>
+          Monorepo próprio com backend em Node, documentação versionada junto do
+          código e convenções de contribuição escritas — para o projeto seguir
+          legível quando outra pessoa entrar nele.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Jogos em Unity — código e arte</h3>
+        <p>
+          Desenvolvimento em C# com UI Toolkit e prefabs, e a arte em pixel feita por
+          mim no Aseprite: sprites, animação e tilesets. Programo e desenho o mesmo
+          projeto, o que elimina a ida e volta entre dev e artista.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Automação e integração</h3>
+        <p>
+          Pipelines que ligam ferramentas que não se falam: n8n em Docker, automação
+          de mídia com ffmpeg, integração com APIs de IA e servidores MCP. Bom para
+          quem tem processo manual repetido todo dia.
+        </p>
+      </div>
+      <div class="card">
+        <h3>App do zero até a loja</h3>
+        <p>
+          Modelagem de domínio, banco local, testes, ícone, identificador de pacote e
+          build assinado. O Probov saiu como <code>br.com.probov</code> — produto
+          empacotado, não protótipo.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="ruler"></div>
+
+<div class="wrap">
+  <section>
+    <div class="section-head">
+      <span class="label">Como o trabalho acontece</span>
+      <h2>Do problema ao app na mão de quem usa</h2>
+    </div>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="num">01</span>
+        <div>
+          <h3>Entender a conta que você faz hoje</h3>
+          <p>
+            Antes de qualquer tela, eu aprendo a regra do seu negócio — como o preço
+            se forma, o que é exceção, onde erra hoje. É essa parte que decide se o
+            app serve ou atrapalha.
+          </p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="num">02</span>
+        <div>
+          <h3>Especificação e plano antes do código</h3>
+          <p>
+            Você recebe por escrito o que será construído e em que ordem, dividido em
+            entregas pequenas. Dá para cortar escopo com clareza em vez de descobrir
+            no fim que faltou o essencial.
+          </p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="num">03</span>
+        <div>
+          <h3>Construção com teste desde o começo</h3>
+          <p>
+            A regra de negócio nasce coberta por teste. Quando você pedir mudança no
+            terceiro mês, a mudança não quebra silenciosamente o que já funcionava.
+          </p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="num">04</span>
+        <div>
+          <h3>Entrega empacotada e documentada</h3>
+          <p>
+            App assinado, pronto para a loja ou distribuição interna, com o código
+            documentado o suficiente para outra pessoa continuar. Sem dependência
+            de mim para o projeto seguir vivo.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+</div>
+
+<div class="ruler ruler--major"></div>
+
+<div class="wrap">
+  <footer>
+    <h2 style="max-width:20ch">Tem um processo no papel que devia estar no celular?</h2>
+    <p style="margin-top:1.1rem;color:var(--ink-soft)">
+      Me conte qual conta você faz hoje na mão. Respondo com uma avaliação honesta de
+      escopo, prazo e se vale mesmo virar aplicativo.
+    </p>
+    <div class="endereco-bloco">
+      <a class="endereco" href="mailto:juliano.sabio.mathias@gmail.com">juliano.sabio.mathias@gmail.com</a>
+      <button class="btn copiar" type="button"
+              data-email="juliano.sabio.mathias@gmail.com">Copiar endereço</button>
+      <a class="btn" href="https://github.com/juliano-sabio/probov" target="_blank" rel="noopener">Probov no GitHub</a>
+    </div>
+
+    <div class="todo">
+      <strong>ANTES DE PUBLICAR — resolver:</strong><br>
+      · confirmar se pode citar o Probov publicamente e se ele já está em uso por alguém
+    </div>
+
+    <p class="footer-note">
+      Números desta página conferidos no repositório do Probov em 15 de agosto de 2026.
+    </p>
+
+<script>
+  document.querySelectorAll('.copiar').forEach(function (botao) {
+    botao.addEventListener('click', async function () {
+      const email = botao.dataset.email;
+      const rotulo = botao.textContent;
+      let copiou = false;
+      try {
+        await navigator.clipboard.writeText(email);
+        copiou = true;
+      } catch (e) {
+        // Sem permissão de área de transferência: seleciona o endereço para
+        // a pessoa copiar com o teclado, em vez de falhar em silêncio.
+        const alvo = document.querySelector('.endereco');
+        if (alvo) {
+          const faixa = document.createRange();
+          faixa.selectNodeContents(alvo);
+          const selecao = window.getSelection();
+          selecao.removeAllRanges();
+          selecao.addRange(faixa);
+        }
+      }
+      botao.textContent = copiou ? 'Copiado' : 'Selecionado — use Ctrl+C';
+      botao.setAttribute('data-copiado', '');
+      setTimeout(function () {
+        botao.textContent = rotulo;
+        botao.removeAttribute('data-copiado');
+      }, 2200);
+    });
+  });
+</script>
+  </footer>
+</div>
+
+</body>
+</html>
