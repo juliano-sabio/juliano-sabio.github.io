@@ -131,10 +131,28 @@
 
   /* ---------------- painel: a faixa de instrumento ---------------- */
   .painel {
-    background: var(--painel);
+    position: relative;
+    isolation: isolate;
     color: var(--painel-tinta);
-    /* marcas de escala descendo pela borda inferior, como regua de mostrador */
     border-bottom: 1px solid var(--painel-rule);
+    /* malha de medicao sobre o verde escuro: papel milimetrado de instrumento,
+       fraca o bastante para nao competir com o texto */
+    background-color: var(--painel);
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 34px 34px;
+  }
+  /* brilho do mostrador: a luz sai de onde ficam os numeros */
+  .painel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(60% 70% at 18% 88%, rgba(232,185,63,.14), transparent 70%),
+      radial-gradient(70% 90% at 85% 0%, rgba(107,162,131,.10), transparent 65%);
+    pointer-events: none;
   }
   .painel .wrap { padding-block: clamp(3rem, 8vw, 5rem) 0; }
 
@@ -339,15 +357,28 @@
   }
 
   /* ---------------- como trabalho ---------------- */
-  .etapas { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.1rem; }
-  .etapa { display: grid; grid-template-columns: 2.5rem 1fr; gap: .9rem; align-items: start; }
-  .etapa .n {
-    font-family: var(--f-mono); font-variant-numeric: tabular-nums;
-    font-size: .72rem; font-weight: 700; color: var(--tag);
-    padding-top: .2rem; border-top: 2px solid var(--tag);
+  /* A ordem importa aqui, entao ela vira uma escala descendo pelas etapas:
+     a haste e' continua, a marca aponta onde voce esta. */
+  .etapas {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1.6rem;
+    display: grid;
+    gap: 1.6rem;
+    border-left: 1px solid var(--rule);
+  }
+  .etapa { position: relative; }
+  .etapa::before {
+    content: "";
+    position: absolute;
+    left: -1.6rem;
+    top: .62em;
+    width: .9rem;
+    height: 2px;
+    background: var(--tag);
   }
   .etapa b { font-size: .97rem; }
-  .etapa p { font-size: .93rem; color: var(--ink-soft); margin-top: .2rem; }
+  .etapa p { font-size: .93rem; color: var(--ink-soft); margin-top: .25rem; }
 
   /* ---------------- contato ---------------- */
   footer { padding: clamp(2.75rem, 6vw, 4.5rem) 0 4rem; }
@@ -380,7 +411,33 @@
     .escala .medida { width: 6rem; }
   }
 
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  /* A barra so' preenche quando entra na tela: a medida acontece na sua frente,
+     que e' o assunto da pagina. Sem isso ela seria so' um enfeite parado. */
+  .escala .barra {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .9s cubic-bezier(.2,.7,.2,1);
+  }
+  .escala.medindo .barra { transform: scaleX(1); }
+
+  /* Ao abrir um projeto o conteudo entra de baixo, curto e uma vez so'. */
+  .projeto[open] > .corpo { animation: revelar .32s cubic-bezier(.2,.7,.2,1); }
+  @keyframes revelar {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* O ponto do cabecalho pulsa devagar: sinal de "disponivel", nao decoracao. */
+  .eyebrow .dot { animation: farol 3.6s ease-in-out infinite; }
+  @keyframes farol {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(232,185,63,.16); }
+    50%      { box-shadow: 0 0 0 7px rgba(232,185,63,.05); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .escala .barra { transform: scaleX(1); }
+  }
 
   @media print {
     .abrir, .contato { display: none; }
@@ -661,28 +718,24 @@ String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 
     </div>
     <ol class="etapas">
       <li class="etapa">
-        <span class="n">01</span>
         <div>
           <b>Entender a conta que você faz hoje</b>
           <p>Antes de qualquer tela, aprendo a regra do seu negócio — como o preço se forma, o que é exceção, onde erra hoje.</p>
         </div>
       </li>
       <li class="etapa">
-        <span class="n">02</span>
         <div>
           <b>Especificação e plano antes do código</b>
           <p>Você recebe por escrito o que será construído e em que ordem, em entregas pequenas. Dá para cortar escopo com clareza.</p>
         </div>
       </li>
       <li class="etapa">
-        <span class="n">03</span>
         <div>
           <b>Construção com teste desde o começo</b>
           <p>A regra de negócio nasce coberta. Mudança no terceiro mês não quebra em silêncio o que já funcionava.</p>
         </div>
       </li>
       <li class="etapa">
-        <span class="n">04</span>
         <div>
           <b>Entrega empacotada e documentada</b>
           <p>App assinado, pronto para a loja, com código legível o bastante para outra pessoa continuar. Sem dependência de mim.</p>
@@ -710,6 +763,18 @@ String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 
 
 <script>
   var menosMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // As barras medem ao entrar na tela, uma vez cada.
+  if (!menosMovimento && 'IntersectionObserver' in window) {
+    var observador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('medindo'); observador.unobserve(e.target); }
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.escala').forEach(function (el) { observador.observe(el); });
+  } else {
+    document.querySelectorAll('.escala').forEach(function (el) { el.classList.add('medindo'); });
+  }
 
   // O vídeo só carrega e roda quando a pessoa abre o projeto.
   document.querySelectorAll('.projeto').forEach(function (item) {
