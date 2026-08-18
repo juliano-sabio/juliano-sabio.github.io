@@ -243,30 +243,42 @@
     list-style: none;
     cursor: pointer;
     display: grid;
-    grid-template-columns: 4.5rem 1fr auto;
-    gap: 1.1rem;
+    grid-template-columns: 7.5rem 1fr auto;
+    gap: 1.4rem;
     align-items: center;
-    padding: 1.15rem .25rem;
+    padding: 1.4rem .25rem;
     transition: background .15s;
   }
   .projeto > summary::-webkit-details-marker { display: none; }
   .projeto > summary:hover { background: var(--sunken); }
   .projeto[open] > summary { background: var(--sunken); }
 
+  /* O formato da miniatura diz o meio antes da palavra:
+     retrato = aplicativo de celular, paisagem = tela de jogo. */
   .miniatura {
-    width: 4.5rem;
-    height: 3.4rem;
-    object-fit: cover;
-    object-position: top center;
+    display: block;
     border: 1px solid var(--rule);
     background: var(--sunken);
-    display: block;
+    object-fit: cover;
+  }
+  .miniatura--retrato {
+    width: 3.6rem;
+    height: 6.4rem;
+    object-position: center 28%;
+    margin-inline: auto;
+  }
+  .miniatura--paisagem {
+    width: 7.5rem;
+    height: 4.6rem;
+    object-position: center;
   }
   .miniatura--vazia {
+    width: 7.5rem;
+    height: 4.6rem;
     display: grid;
     place-items: center;
     font-family: var(--f-mono);
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: var(--ink-faint);
   }
 
@@ -401,7 +413,9 @@
       align-items: start;
       padding: 1rem .25rem;
     }
-    .miniatura { width: 3.4rem; height: 2.6rem; }
+    .projeto > summary { grid-template-columns: 4.6rem 1fr auto; }
+    .miniatura--retrato { width: 2.6rem; height: 4.6rem; }
+    .miniatura--paisagem, .miniatura--vazia { width: 4.6rem; height: 3.4rem; }
     .abrir { font-size: 0; padding: .3rem .45rem; line-height: 1; }
     .abrir::after { font-size: 1rem; }
     .chips li { font-size: .66rem; padding: .25rem .45rem; }
@@ -487,7 +501,7 @@
 
       <details class="projeto">
         <summary>
-          <img class="miniatura" src="img/pesagem.png" alt="" loading="lazy">
+          <img class="miniatura miniatura--retrato" src="img/pesagem.png" alt="" loading="lazy">
           <div>
             <h3>Probov</h3>
             <p class="resumo">Pesagem e precificação de bovinos, offline, com relatório em PDF.</p>
@@ -579,7 +593,7 @@ String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 
 
       <details class="projeto">
         <summary>
-          <img class="miniatura" src="img/spirit-mask-poster.jpg" alt="" loading="lazy">
+          <video class="miniatura miniatura--paisagem" src="img/spirit-mask.mp4" poster="img/spirit-mask-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
           <div>
             <h3>Spirit Mask</h3>
             <p class="resumo">Jogo de sobrevivência com co-op online, feito em dupla. Código fechado.</p>
@@ -760,6 +774,18 @@ String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 
 
 <script>
   var menosMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // A miniatura do jogo so' roda quando esta' visivel: movimento na lista sem
+  // baixar video de quem nem chegou ate la.
+  var miniVideo = document.querySelector('video.miniatura');
+  if (miniVideo && !menosMovimento && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting) { e.target.preload = 'auto'; e.target.play().catch(function () {}); }
+        else { e.target.pause(); }
+      });
+    }, { threshold: 0.4 }).observe(miniVideo);
+  }
 
   // As barras medem ao entrar na tela, uma vez cada.
   if (!menosMovimento && 'IntersectionObserver' in window) {
