@@ -342,7 +342,14 @@
   .chips li {
     font-family: var(--f-mono); font-size: .7rem;
     padding: .3rem .55rem; border: 1px solid var(--rule); color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: .35rem;
   }
+  .chips img { width: 12px; height: 12px; display: block; flex: none; }
+  /* A marca da Unity e' preta e desaparece no tema escuro. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .logo-mono { filter: invert(1); }
+  }
+  :root[data-theme="dark"] .logo-mono { filter: invert(1); }
 
   /* ---------------- como trabalho ---------------- */
   /* A ordem importa aqui, entao ela vira uma escala descendo pelas etapas:
@@ -350,18 +357,20 @@
   .etapas {
     list-style: none;
     margin: 0;
-    padding: 0 0 0 1.6rem;
+    padding: 0 0 0 1.75rem;
     display: grid;
-    gap: 1.6rem;
-    border-left: 1px solid var(--rule);
+    gap: 1.75rem;
+    border-left: 2px solid var(--rule-soft);
   }
   .etapa { position: relative; }
+  /* a marca atravessa a haste, como risco de escala — nao fica solta ao lado */
   .etapa::before {
     content: "";
     position: absolute;
-    left: -1.6rem;
-    top: .62em;
-    width: .9rem;
+    left: -1.75rem;
+    top: .55em;
+    transform: translateX(-50%);
+    width: 14px;
     height: 2px;
     background: var(--tag);
   }
@@ -487,7 +496,7 @@
               <span class="val">5.207 linhas · Dart</span>
             </div>
             <ul class="chips">
-              <li>Flutter</li><li>Drift / SQLite</li><li>Riverpod</li><li>Código aberto</li>
+              <li><img src="img/logo/flutter.svg" alt="">Flutter</li><li>Drift / SQLite</li><li>Riverpod</li><li>Código aberto</li>
             </ul>
           </div>
           <span class="abrir">Detalhes</span>
@@ -579,7 +588,7 @@ String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 
               <span class="val">94.930 linhas · C#</span>
             </div>
             <ul class="chips">
-              <li>Unity</li><li>Netcode</li><li>Relay</li><li>Comercial</li>
+              <li><img class="logo-mono" src="img/logo/unity.svg" alt="">Unity</li><li>Netcode</li><li>Relay</li><li>Comercial</li>
             </ul>
           </div>
           <span class="abrir">Detalhes</span>
@@ -653,7 +662,7 @@ String <span class="t">formatArrobas</span>(int centesimos)  <span class="c">// 
           <div>
             <h3>Automação e integração</h3>
             <p class="resumo">Pipelines que ligam ferramentas que não se falam.</p>
-            <ul class="chips"><li>Python</li><li>ffmpeg</li><li>Docker</li><li>APIs de IA</li></ul>
+            <ul class="chips"><li><img src="img/logo/python.svg" alt="">Python</li><li>ffmpeg</li><li>Docker</li><li>APIs de IA</li></ul>
           </div>
           <span class="abrir">Detalhes</span>
         </summary>
