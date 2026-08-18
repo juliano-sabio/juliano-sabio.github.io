@@ -27,6 +27,15 @@
     --rule:       #CFD4CD;
     --rule-soft:  #E2E6DF;
 
+    /* painel: a faixa escura do topo tem paleta propria, para nao depender do tema */
+    --painel:       #101A15;
+    --painel-alto:  #16241D;
+    --painel-tinta: #EAF0EB;
+    --painel-fraco: #9BAAA0;
+    --painel-luz:   #E8B93F;
+    --painel-rule:  #2A3A31;
+    --painel-borda: #55705F;   /* borda de botao: precisa de 3:1, o divisor nao */
+
     --f-display: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --f-body:    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --f-serif:   Georgia, "Iowan Old Style", "Times New Roman", serif;
@@ -37,7 +46,7 @@
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --paper:      #0E1211;
+      --paper:      #080B0A;
       --surface:    #161B19;
       --sunken:     #1C2320;
       --ink:        #E9EDE8;
@@ -51,7 +60,7 @@
     }
   }
   :root[data-theme="dark"] {
-    --paper:      #0E1211;
+    --paper:      #080B0A;
     --surface:    #161B19;
     --sunken:     #1C2320;
     --ink:        #E9EDE8;
@@ -110,25 +119,61 @@
     background-image: repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px 11px);
     border-top: 1px solid var(--rule-soft);
   }
+  /* A borda do painel e' a escala do instrumento: marca ambar, visivel nos dois temas. */
+  .ruler--painel {
+    background-image: repeating-linear-gradient(to right,
+      rgba(232,185,63,.55) 0 1px, transparent 1px 11px);
+    border-top: 0;
+    border-bottom: 1px solid rgba(232,185,63,.35);
+    background-color: var(--painel);
+    height: 15px;
+  }
 
-  /* ---------------- topo ---------------- */
-  header { padding: clamp(3.5rem, 9vw, 6rem) 0 2.75rem; }
+  /* ---------------- painel: a faixa de instrumento ---------------- */
+  .painel {
+    background: var(--painel);
+    color: var(--painel-tinta);
+    /* marcas de escala descendo pela borda inferior, como regua de mostrador */
+    border-bottom: 1px solid var(--painel-rule);
+  }
+  .painel .wrap { padding-block: clamp(3rem, 8vw, 5rem) 0; }
 
-  .eyebrow { display: flex; align-items: center; gap: .55rem; margin-bottom: 1.5rem; }
-  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tag); flex: none; }
+  .eyebrow { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.75rem; }
+  .eyebrow .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--painel-luz); flex: none;
+    box-shadow: 0 0 0 4px rgba(232,185,63,.16);
+  }
+  .painel .label { color: var(--painel-fraco); }
 
-  h1 { font-size: clamp(2.5rem, 7vw, 4.2rem); }
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 5rem);
+    letter-spacing: -0.035em;
+    color: var(--painel-tinta);
+  }
 
   .lede {
     font-family: var(--f-serif);
-    font-size: clamp(1.15rem, 2.2vw, 1.4rem);
-    line-height: 1.45;
-    color: var(--ink-soft);
-    margin-top: 1.35rem;
-    max-width: 33ch;
+    font-size: clamp(1.15rem, 2.3vw, 1.5rem);
+    line-height: 1.4;
+    color: var(--painel-fraco);
+    margin-top: 1.25rem;
+    max-width: 32ch;
   }
 
-  .contato { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 2rem; }
+  .contato { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 2.25rem; }
+  .painel .btn {
+    background: transparent;
+    border-color: var(--painel-borda);
+    color: var(--painel-tinta);
+  }
+  .painel .btn:hover { border-color: var(--painel-luz); }
+  .painel .btn--forte {
+    background: var(--painel-luz);
+    border-color: var(--painel-luz);
+    color: #1A1206;
+  }
+  .painel .btn--forte:hover { background: #F2C95A; border-color: #F2C95A; }
 
   .btn {
     font-family: var(--f-mono);
@@ -147,31 +192,33 @@
   .btn--forte { background: var(--field); border-color: var(--field); color: var(--paper); }
   .btn--forte:hover { background: var(--field-soft); border-color: var(--field-soft); }
 
-  /* ---------------- números ---------------- */
+  /* ---------------- mostrador ---------------- */
   .numeros {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
     gap: 1px;
-    background: var(--rule-soft);
-    border-block: 1px solid var(--rule-soft);
+    background: var(--painel-rule);
+    border-top: 1px solid var(--painel-rule);
+    margin-top: clamp(2.5rem, 6vw, 4rem);
   }
-  .num { background: var(--paper); padding: 1.25rem 1rem; }
+  .num { background: var(--painel); padding: 1.15rem 1rem 1.35rem; }
   .num b {
     font-family: var(--f-mono);
     font-variant-numeric: tabular-nums;
-    font-size: 1.7rem;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem);
     font-weight: 700;
-    color: var(--field);
+    color: var(--painel-luz);
     display: block;
     line-height: 1;
+    letter-spacing: -0.02em;
   }
   .num span {
     font-family: var(--f-mono);
-    font-size: .66rem;
-    letter-spacing: .09em;
+    font-size: .64rem;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-top: .5rem;
+    color: var(--painel-fraco);
+    margin-top: .55rem;
     display: block;
   }
 
@@ -341,32 +388,33 @@
   }
 </style>
 
-<div class="wrap">
-  <header>
-    <div class="eyebrow">
-      <span class="dot"></span>
-      <span class="label">Desenvolvedor mobile · Flutter · disponível para projetos</span>
-    </div>
-    <h1>Juliano Sabio</h1>
-    <p class="lede">
-      Construo aplicativos que precisam funcionar longe do escritório — sem sinal,
-      com número que não pode errar.
-    </p>
-    <div class="contato">
-      <a class="btn btn--forte" href="mailto:juliano.sabio.mathias@gmail.com">Falar sobre um projeto</a>
-      <a class="btn" href="mailto:juliano.sabio.mathias@gmail.com">juliano.sabio.mathias@gmail.com</a>
-      <a class="btn" href="https://github.com/juliano-sabio/probov" target="_blank" rel="noopener">Código no GitHub</a>
-    </div>
-  </header>
-</div>
+<div class="painel">
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">
+        <span class="dot"></span>
+        <span class="label">Desenvolvedor mobile · Flutter · disponível para projetos</span>
+      </div>
+      <h1>Juliano Sabio</h1>
+      <p class="lede">
+        Construo aplicativos que precisam funcionar longe do escritório — sem sinal,
+        com número que não pode errar.
+      </p>
+      <div class="contato">
+        <a class="btn btn--forte" href="mailto:juliano.sabio.mathias@gmail.com">Falar sobre um projeto</a>
+        <a class="btn" href="mailto:juliano.sabio.mathias@gmail.com">juliano.sabio.mathias@gmail.com</a>
+        <a class="btn" href="https://github.com/juliano-sabio/probov" target="_blank" rel="noopener">Código no GitHub</a>
+      </div>
+    </header>
 
-<div class="wrap">
-  <div class="numeros">
-    <div class="num"><b>100 mil</b><span>linhas nos projetos</span></div>
-    <div class="num"><b>4</b><span>linguagens em uso real</span></div>
-    <div class="num"><b>64</b><span>testes automatizados</span></div>
-    <div class="num"><b>2</b><span>jogos comerciais</span></div>
+    <div class="numeros">
+      <div class="num"><b>100 mil</b><span>linhas nos projetos</span></div>
+      <div class="num"><b>4</b><span>linguagens em uso real</span></div>
+      <div class="num"><b>64</b><span>testes automatizados</span></div>
+      <div class="num"><b>2</b><span>jogos comerciais</span></div>
+    </div>
   </div>
+  <div class="ruler ruler--painel"></div>
 </div>
 
 <div class="wrap">
